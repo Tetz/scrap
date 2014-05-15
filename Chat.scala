@@ -65,34 +65,35 @@ object Chat extends Controller {
 
 
               // TODO Create Json 
-              try{
-                var messageMap = for (v <- messageList)yield{
+              var messageMap = for (v <- messageList)yield{
                   Map(
+                    try{
                     "user_id" -> v.id.toString,
                     "name" -> models.Users.fetchRowById(v.id).head.name,
                     "message" -> v.message
-                    )
-                }
-
-                val jsonData = Json.obj(
-                  "messages" -> Json.toJson(messageMap),
-                  "info" -> "end"
-                )
-                println(jsonData)
-                Ok(jsonData)
-              }catch{
-                case ex: FileNotFoundException => println("missing file")
-                case ex: IOException => println("I/O error")
+                  }catch{
+                    case_:Throwable=>{
+                      "user_id" -> "1",
+                      "name" -> "hoge",
+                      "message"-> "in Throwable"
+                    } 
+                  }
+                  )
               }
 
+              val jsonData = Json.obj(
+                "messages" -> Json.toJson(messageMap),
+                "info" -> "end"
+              )
             // OutPut Result
             val hoge = models.Users.fetchRowById(user_id).head.name
             println(messageList)
-            Ok("Chat.scala :: :: error")
-        }
+            println(jsonData)
+            Ok(jsonData)
+          }
         ).getOrElse{
           Ok("Chat.scala :: :: error")
-            }
         }
+     }
 
-      }
+}
